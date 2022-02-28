@@ -1,10 +1,15 @@
-import {Button, Col, Row, DatePicker, Form, Input, InputNumber} from "antd";
+import {Button, Col, Row, DatePicker, Form, Input, InputNumber, Alert} from "antd";
 import {AddUser} from "../api/requests";
 import Title from "antd/es/typography/Title";
 import {Link} from "react-router-dom";
 import {ArrowLeftOutlined} from "@ant-design/icons";
+import {useState} from "react";
 
 const MyForm = ({initialValues}) => {
+  const [form] = Form.useForm();
+  const [error, setError] = useState();
+  const [response, setResponse] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   const layout = {
     labelCol: { span: 6 },
@@ -17,7 +22,17 @@ const MyForm = ({initialValues}) => {
       birthday: fieldValues['birthday'].format('YYYY-MM-DD')
     }
 
-    AddUser(values);
+    setIsLoading(true);
+    AddUser(values).then(data => {
+      setIsLoading(false);
+      setError(data.error ?? undefined);
+      setResponse(data.payload ?? undefined);
+
+      if(data.payload) {
+        form.resetFields();
+        console.log('aaa');
+      }
+    });
   }
 
   const onFinishFailed = (errorInfo) => {
@@ -42,12 +57,33 @@ const MyForm = ({initialValues}) => {
       </Row>
       <Row>
         <Col span={24}>
+          {
+            error && (
+              <Alert
+                message={error}
+                type='error'
+                closable
+                style={{marginBottom: '16px'}}
+              />
+            )
+          }
+          {
+            response && (
+              <Alert
+                message='Successfully added user'
+                type='success'
+                closable
+                style={{marginBottom: '16px'}}
+              />
+            )
+          }
           <Form
             {...layout}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete='off'
             initialValues={initialValues}
+            form={form}
           >
             <Form.Item
               label='Firstname'
@@ -101,6 +137,7 @@ const MyForm = ({initialValues}) => {
               <Button
                 type='primary'
                 htmlType='submit'
+                loading={isLoading}
               >
                 Submit
               </Button>

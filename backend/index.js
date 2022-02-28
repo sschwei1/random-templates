@@ -8,10 +8,49 @@ const app = new Koa();
 const router = new Router();
 const prisma = new PrismaClient();
 
-router.get('/api/userList', async (ctx) => {
-  console.log('ctx', ctx.request.query);
-  ctx.body = await prisma.user.findMany();
+router.use('/api', async (ctx, next) => {
+  console.log('--------------');
+  const bodySchema = {payload: null, error: null};
+
+  try {
+    await next();
+    bodySchema.payload = ctx.body;
+  } catch(e) {
+    bodySchema.error = e;
+    console.log('error', e)
+  }
+
+  ctx.body = bodySchema;
 });
+
+router.get('/api/user/list', async (ctx) => {
+  const filter = ctx.request.query;
+  console.log('filter', filter);
+
+  let {ageMin, ageMax} = filter;
+
+  ageMin = Number(ageMin) ?? 0;
+  ageMax = Number(ageMax) ?? 999;
+
+  if(ageMin > ageMax) {
+    let tmp = ageMax;
+    ageMax = ageMin;
+    ageMin = tmp;
+  }
+
+  ctx.body = await prisma.$queryRaw`SELECT * from user WHERE user.age >= ${ageMin} AND user.age <= ${ageMax}`;
+});
+
+router.post('/api/user/add', async (ctx) => {
+  const userInformation = ctx.request.body;
+  console.log('userInformation', userInformation);
+
+  userInformation.birthday = new Date(userInformation.birthday);
+
+  ctx.body = await prisma.user.create({
+    data: userInformation
+  });
+})
 
 app
   .use(bodyParser())

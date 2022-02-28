@@ -1,4 +1,4 @@
-import {Button, Card, Col, Form, Input, InputNumber, Row, Table} from "antd";
+import {Alert, Button, Card, Col, Form, Input, InputNumber, Row, Table} from "antd";
 import Title from "antd/es/typography/Title";
 import {Link} from "react-router-dom";
 import {ArrowLeftOutlined, SearchOutlined} from "@ant-design/icons";
@@ -150,8 +150,16 @@ const MyTable = ({}) => {
       <Row>
         <Col span={24}>
           <Card title='Filter via Api' style={{marginBottom: '24px'}}>
+            {
+              error && (<Alert
+                message={error}
+                type='error'
+                closable
+                style={{marginBottom: '16px'}}
+              />)
+            }
             <Form
-              onFinish={getUserList}
+              onFinish={callUserApi}
             >
               <Form.Item
                 label='Age Range'

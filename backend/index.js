@@ -29,8 +29,11 @@ router.get('/api/user/list', async (ctx) => {
 
   let {ageMin, ageMax} = filter;
 
-  ageMin = Number(ageMin) ?? 0;
-  ageMax = Number(ageMax) ?? 999;
+  ageMin = Number(ageMin);
+  ageMax = Number(ageMax);
+
+  ageMin = isNaN(ageMin) ? 0 : ageMin;
+  ageMax = isNaN(ageMax) ? 999 : ageMax;
 
   if(ageMin > ageMax) {
     let tmp = ageMax;

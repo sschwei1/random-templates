@@ -1,5 +1,5 @@
 import {Button, Col, Row, DatePicker, Form, Input, InputNumber} from "antd";
-import {AddUser} from "../api/api";
+import {AddUser} from "../api/requests";
 import Title from "antd/es/typography/Title";
 import {Link} from "react-router-dom";
 import {ArrowLeftOutlined} from "@ant-design/icons";

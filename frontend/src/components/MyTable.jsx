@@ -1,14 +1,35 @@
 import {Button, Card, Col, Form, Input, InputNumber, Row, Table} from "antd";
 import Title from "antd/es/typography/Title";
 import {Link} from "react-router-dom";
-import Icon, {ArrowLeftOutlined, MinusOutlined, SearchOutlined} from "@ant-design/icons";
+import {ArrowLeftOutlined, SearchOutlined} from "@ant-design/icons";
 import {useEffect, useRef, useState} from "react";
 import Highlighter from 'react-highlight-words';
+import {getUserList} from "../api/requests";
+
 
 const MyTable = ({}) => {
   const [searchTerms, setSearchTerms] = useState({});
+  const [error, setError] = useState();
+  const [tableData, setTableData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const inpRef = useRef(null);
+
+  const callUserApi = (queryParam) => {
+    setIsLoading(true);
+    getUserList(queryParam)
+      .then(data => ({...data, payload: data?.payload?.map(e => ({...e, key: e.userId}))}))
+      .then(data => {
+      setIsLoading(false);
+
+      setError(data.error ?? undefined);
+      setTableData(data.payload ?? []);
+    })
+  }
+
+  useEffect(() => {
+    callUserApi()
+  }, []);
 
   const buildFilter = (dataIndex) => {
     const handleSearch = (selectedKeys, confirm) => {
@@ -110,10 +131,6 @@ const MyTable = ({}) => {
     }
   ];
 
-  const testData = [
-
-  ]
-
   return (
     <>
       <Row>
@@ -133,7 +150,9 @@ const MyTable = ({}) => {
       <Row>
         <Col span={24}>
           <Card title='Filter via Api' style={{marginBottom: '24px'}}>
-            <Form>
+            <Form
+              onFinish={getUserList}
+            >
               <Form.Item
                 label='Age Range'
                 style={{marginBottom: 0}}
@@ -198,7 +217,7 @@ const MyTable = ({}) => {
       </Row>
       <Row>
         <Col span={24}>
-          <Table columns={columns} dataSource={testData} />
+          <Table columns={columns} dataSource={tableData} loading={isLoading} />
         </Col>
       </Row>
     </>

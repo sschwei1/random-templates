@@ -1,4 +1,4 @@
-import {Button, Card, Col, DatePicker, Form, Input, InputNumber, Row, Table} from "antd";
+import {Button, Card, Col, Form, Input, InputNumber, Row, Table} from "antd";
 import Title from "antd/es/typography/Title";
 import {Link} from "react-router-dom";
 import Icon, {ArrowLeftOutlined, MinusOutlined, SearchOutlined} from "@ant-design/icons";
@@ -10,11 +10,7 @@ const MyTable = ({}) => {
 
   const inpRef = useRef(null);
 
-  useEffect(() => {
-    console.log('search terms:', searchTerms);
-  }, [searchTerms]);
-
-  const buildFilter = (dataIndex, inputType) => {
+  const buildFilter = (dataIndex) => {
     const handleSearch = (selectedKeys, confirm) => {
       confirm();
 
@@ -115,27 +111,7 @@ const MyTable = ({}) => {
   ];
 
   const testData = [
-    {
-      key: '1',
-      firstname: 'Sebastian',
-      age: 22,
-      birthday: '1999-05-24'
-    },{
-      key: '2',
-      firstname: 'Kevin',
-      age: 20,
-      birthday: 'im winter'
-    },{
-      key: '3',
-      firstname: 'Florian',
-      age: 14,
-      birthday: 'mr. trans age'
-    },{
-      key: '4',
-      firstname: 'Marcel',
-      age: 29,
-      birthday: 'mr. doppelmoral'
-    }
+
   ]
 
   return (
@@ -156,7 +132,7 @@ const MyTable = ({}) => {
       </Row>
       <Row>
         <Col span={24}>
-          <Card title='Search via Api' style={{marginBottom: '24px'}}>
+          <Card title='Filter via Api' style={{marginBottom: '24px'}}>
             <Form>
               <Form.Item
                 label='Age Range'
